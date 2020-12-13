@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BL
+namespace BL.Interfaces
 {
-    public class Class1
+    public interface ITModel<TKey>
     {
+        TKey Id { get; set; }
     }
 }
