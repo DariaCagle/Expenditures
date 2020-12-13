@@ -8,7 +8,7 @@ namespace Expenditures.Models
 {
     public class TransactionPostModel
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public decimal Value { get; set; }
         [MaxLength(24,ErrorMessage = "Max length is 24 symbols")]
         public string Description { get; set; }

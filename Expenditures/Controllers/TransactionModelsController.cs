@@ -70,20 +70,21 @@ namespace ExpendituresALevel.Controllers
         {
             if (ModelState.IsValid)
             {
-                transactions.Add(transactionModel);
+                _transactionService.Create(_mapper.Map<TransactionModel>(transactionModel));
 
                 return RedirectToAction("Index");
             }
             return View(transactionModel);
         }
 
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(TransactionPostModel model)
         {
-            if (id == null)
+            if (model.Id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            TransactionPostModel transactionModel = transactions.FirstOrDefault(x => x.Id == id);
+            var models = _mapper.Map<IEnumerable<TransactionPostModel>>(_transactionService.GetAll());
+            TransactionPostModel transactionModel = models.FirstOrDefault(x => x.Id == model.Id);
             if (transactionModel == null)
             {
                 return HttpNotFound();
@@ -91,25 +92,26 @@ namespace ExpendituresALevel.Controllers
             return View(transactionModel);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Value,Description,Title,CreatedDate,UpdateDate")] TransactionPostModel transactionModel)
-        {
-            if (ModelState.IsValid)
-            {
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Edit([Bind(Include = "Id,Value,Description,Title,CreatedDate,UpdateDate")] TransactionPostModel transactionModel)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
 
-                return RedirectToAction("Index");
-            }
-            return View(transactionModel);
-        }
+        //        return RedirectToAction("Index");
+        //    }
+        //    return View(transactionModel);
+        //}
 
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(TransactionPostModel model)
         {
-            if (id == null)
+            if (model.Id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            TransactionPostModel transactionModel = transactions.FirstOrDefault(x => x.Id == id);
+            var models = _mapper.Map<IEnumerable<TransactionPostModel>>(_transactionService.GetAll());
+            TransactionPostModel transactionModel = models.FirstOrDefault(x => x.Id == model.Id);
             if (transactionModel == null)
             {
                 return HttpNotFound();
@@ -119,9 +121,10 @@ namespace ExpendituresALevel.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(TransactionPostModel model)
         {
-            transactions.RemoveAt(0);
+            var BLmodel = _mapper.Map<TransactionModel>(model);
+            _transactionService.Remove(BLmodel);
             return RedirectToAction("Index");
         }
 

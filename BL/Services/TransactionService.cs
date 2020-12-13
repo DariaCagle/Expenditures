@@ -62,7 +62,9 @@ namespace BL.Services
 
         public void Remove(TransactionModel model)
         {
-            throw new NotImplementedException();
+            var Dmodel = _mapper.Map<MyTransaction>(model);
+            _transactionRepository.Remove(Dmodel);
+
         }
 
         public void Update(TransactionModel model)
