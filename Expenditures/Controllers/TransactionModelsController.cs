@@ -6,36 +6,52 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using AutoMapper;
+using BL.Interfaces;
+using BL.Models;
+using BL.Services;
 using Expenditures.Models;
+using Expenditures.Models.Category;
 
 
 namespace ExpendituresALevel.Controllers
 {
     public class TransactionModelsController : Controller
     {
+        private readonly IService<TransactionModel> _transactionService;
+        private readonly IService<CategoryModel> _categoryService;
+        private readonly IMapper _mapper;
 
-        static List<TransactionPostModel> transactions;
+
         public TransactionModelsController()
         {
-            transactions = new List<TransactionPostModel>
+            var mapperConfig = new MapperConfiguration(cfg =>
             {
-                new TransactionPostModel{Title="sdfddsf", Id=2, Description="sdfsdfsdf", CreatedDate= DateTime.Now},
-                new TransactionPostModel{Title="sfsdfs", Id=1, Description="sdfsdffdsfdsdfsfds", CreatedDate= DateTime.Now }
-            };
+                cfg.CreateMap<TransactionModel, TransactionPostModel>().ReverseMap();
+                cfg.CreateMap<CategoryModel, CategoryViewModel>().ReverseMap();
+
+            });
+
+            _mapper = new Mapper(mapperConfig);
+            _transactionService = new TransactionService();
+            _categoryService = new CategoryService();
+
         }
 
         public ActionResult Index()
         {
-            return View(transactions);
+            var models = _mapper.Map<IEnumerable<TransactionPostModel>>(_transactionService.GetAll());
+            return View(models);
         }
 
         public ActionResult Details(int? id)
         {
+            var models = _mapper.Map<IEnumerable<TransactionPostModel>>(_transactionService.GetAll());
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            TransactionPostModel transactionModel = transactions.FirstOrDefault(x => x.Id == id);
+            TransactionPostModel transactionModel = models.FirstOrDefault(x => x.Id == id);
             if (transactionModel == null)
             {
                 return HttpNotFound();
