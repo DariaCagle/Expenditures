@@ -50,7 +50,8 @@ namespace DAL.Repositories
 
         public void Remove(TEntity model)
         {
-            _dbSet.Remove(model);
+            var entity = GetById(model.Id);
+            _dbSet.Remove(entity);
             _ctx.SaveChanges();
         }
 
@@ -80,7 +81,7 @@ namespace DAL.Repositories
 
         public IEnumerable<TEntity> GetAll()
         {
-            throw new NotImplementedException();
+            return _dbSet.ToList();
         }
     }
 }

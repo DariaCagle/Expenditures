@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BL.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BL.Interfaces
 {
-    public interface IService<T> 
+    public interface IService<T>
     { 
         IEnumerable<T> GetAll();
         T Create(T model);

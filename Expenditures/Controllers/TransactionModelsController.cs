@@ -23,7 +23,7 @@ namespace ExpendituresALevel.Controllers
         private readonly IMapper _mapper;
 
 
-        public TransactionModelsController()
+        public TransactionModelsController(IService<TransactionModel> transactionService)
         {
             var mapperConfig = new MapperConfiguration(cfg =>
             {
@@ -33,7 +33,7 @@ namespace ExpendituresALevel.Controllers
             });
 
             _mapper = new Mapper(mapperConfig);
-            _transactionService = new TransactionService();
+            _transactionService = transactionService;
             _categoryService = new CategoryService();
 
         }
