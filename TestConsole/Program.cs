@@ -5,15 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using DAL;
 using DAL.Entities;
+using DAL.Interfaces;
 using DAL.Repositories;
 
 namespace TestConsole
 {
     class Program
     {
+        private static IRepository<MyTransaction, int> _transactionRepository;
         static void Main(string[] args)
         {
-            var _transactionRepository = new Repository<MyTransaction, int>(new Context());
+            _transactionRepository = new Repository<MyTransaction, int>(new Context());
             var tr1 = new MyTransaction
             {
                 Value = 9.65M,
@@ -23,6 +25,9 @@ namespace TestConsole
                 Title = "test"
             };
             _transactionRepository.Create(tr1);
+
+            var model = _transactionRepository.GetById(1);
+            _transactionRepository.Remove(model);
         }
     }
 }

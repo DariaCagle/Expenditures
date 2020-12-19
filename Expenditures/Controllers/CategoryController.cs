@@ -1,29 +1,46 @@
-﻿using Expenditures.Models;
-using Expenditures.Models.Category;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Web.Http;
+using System.Web;
 using System.Web.Mvc;
+using AutoMapper;
+using BL.Interfaces;
+using BL.Models;
+using BL.Services;
+using Expenditures.Models;
+using Expenditures.Models.Category;
+
 
 namespace Expenditures.Controllers
 {
     public class CategoryController : Controller
     {
+        private readonly IService<TransactionModel> _transactionService;
+        private readonly IService<CategoryModel> _categoryService;
+        private readonly IMapper _mapper;
 
-        public ActionResult MyCategories()
+
+        public CategoryController(IService<TransactionModel> transactionService, IService<CategoryModel> categoryService)
         {
-            //List<CategoryBL> = service.GetMyCategories();
-
-            CategoryViewModel model = new CategoryViewModel
+            var mapperConfig = new MapperConfiguration(cfg =>
             {
-                Id = 1,
-                Title = "test"
-            };
+                cfg.CreateMap<TransactionModel, TransactionPostModel>().ReverseMap();
+                cfg.CreateMap<CategoryModel, CategoryViewModel>().ReverseMap();
 
-            return View("/Views/Category/MyCategories.cshtml", model);
+            });
+
+            _mapper = new Mapper(mapperConfig);
+            _transactionService = transactionService;
+            _categoryService = categoryService;
+        }
+
+        public ActionResult Index()
+        {
+            var models = _mapper.Map<IEnumerable<CategoryViewModel>>(_categoryService.GetAll());
+            return View(models);
         }
 
         public ActionResult Create()
@@ -31,12 +48,85 @@ namespace Expenditures.Controllers
             return View();
         }
 
-        public ActionResult GetTransactionList()
+        [System.Web.Mvc.HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create([Bind(Include = "Id,Value,Description,Title,CreatedDate,UpdatedDate")]  CategoryViewModel model)
         {
-            TransactionPostModel transactionModel = new TransactionPostModel();
-            transactionModel.Title = "test";
-            transactionModel.Value = 500;
-            return PartialView("/Views/Transaction/_TransactionData.cshtml");
+            if (ModelState.IsValid)
+            {
+                _categoryService.Create(_mapper.Map<CategoryModel>(model));
+
+                return RedirectToAction("Index");
+            }
+            return View(model);
+        }
+
+        public ActionResult Details(int? id)
+        {
+            var models = _mapper.Map<IEnumerable<CategoryViewModel>>(_categoryService.GetAll());
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            CategoryViewModel categoryModel = models.FirstOrDefault(x => x.Id == id);
+            if (categoryModel == null)
+            {
+                return HttpNotFound();
+            }
+            return View(categoryModel);
+        }
+
+        public ActionResult Edit(int id)
+        {
+            var categoryModel = _mapper.Map<CategoryViewModel>(_categoryService.GetById(id));
+            if (categoryModel == null)
+            {
+                return HttpNotFound();
+            }
+            _categoryService.Update(_mapper.Map<CategoryModel>(categoryModel));
+            return View(categoryModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit([Bind(Include = "Id,Value,Description,Title,CreatedDate,UpdatedDate")] CategoryViewModel categoryModel)
+        {
+            if (ModelState.IsValid)
+            {
+                _categoryService.Update(_mapper.Map<CategoryModel>(categoryModel));
+                return RedirectToAction("Index");
+            }
+            return View(categoryModel);
+        }
+
+        public ActionResult Delete(CategoryViewModel model)
+        {
+            if (model.Id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var models = _mapper.Map<IEnumerable<CategoryViewModel>>(_categoryService.GetAll());
+            CategoryViewModel categoryModel = models.FirstOrDefault(x => x.Id == model.Id);
+            if (categoryModel == null)
+            {
+                return HttpNotFound();
+            }
+            return View(categoryModel);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(CategoryViewModel model)
+        {
+            var BLmodel = _mapper.Map<CategoryModel>(model);
+            _categoryService.Remove(BLmodel);
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult GetCategoryList()
+        {
+            var models =_categoryService.GetAll();
+            return PartialView("/Views/Category/GetCategoryList.cshtml", models);
         }
     }
 }

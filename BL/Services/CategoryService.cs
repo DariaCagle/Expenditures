@@ -62,13 +62,14 @@ namespace BL.Services
 
         public void Remove(CategoryModel model)
         {
-            throw new NotImplementedException();
+            var Dmodel = _mapper.Map<Category>(model);
+            _categoryRepository.Remove(Dmodel);
         }
 
         public void Update(CategoryModel model)
         {
             var Dmodel = _mapper.Map<Category>(model);
-            _categoryRepository.Remove(Dmodel);
+            _categoryRepository.Update(Dmodel);
         }
     }
 }

@@ -266,8 +266,6 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\Category\MyCategories.cshtml" />
-    <Content Include="Views\Category\Create.cshtml" />
     <Content Include="Views\TransactionModels\Create.cshtml" />
     <Content Include="Views\TransactionModels\Delete.cshtml" />
     <Content Include="Views\TransactionModels\Details.cshtml" />
@@ -275,6 +273,11 @@
     <Content Include="Views\TransactionModels\Index.cshtml" />
     <Content Include="Views\Shared\_InfoData.cshtml" />
     <Content Include="Views\Transaction\_TransactionData.cshtml" />
+    <Content Include="Views\Category\Create.cshtml" />
+    <Content Include="Views\Category\Details.cshtml" />
+    <Content Include="Views\Category\Index.cshtml" />
+    <Content Include="Views\Category\Delete.cshtml" />
+    <Content Include="Views\Category\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

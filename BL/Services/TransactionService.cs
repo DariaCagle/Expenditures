@@ -70,7 +70,7 @@ namespace BL.Services
         public void Update(TransactionModel model)
         {
             var Dmodel = _mapper.Map<MyTransaction>(model);
-            _transactionRepository.Remove(Dmodel);
+            _transactionRepository.Update(Dmodel);
         }
     }
 }

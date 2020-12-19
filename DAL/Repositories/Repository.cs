@@ -71,12 +71,12 @@ namespace DAL.Repositories
 
         public TEntity GetById(Tkey id)
         {
-            return _dbSet.FirstOrDefault(x => x.Id.Equals(id));
+            return _dbSet.AsEnumerable().FirstOrDefault(x => x.Id.Equals(id));
         }
 
         public TEntity GetBy(Expression<Func<TEntity, bool>> condition)
         {
-            throw new NotImplementedException();
+            return _dbSet.FirstOrDefault(condition);
         }
 
         public IEnumerable<TEntity> GetAll()

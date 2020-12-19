@@ -66,7 +66,7 @@ namespace ExpendituresALevel.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Value,Description,Title,CreatedDate,UpdateDate")] TransactionPostModel transactionModel)
+        public ActionResult Create([Bind(Include = "Id,Value,Description,Title,CreatedDate,UpdatedDate")] TransactionPostModel transactionModel)
         {
             if (ModelState.IsValid)
             {
@@ -77,32 +77,28 @@ namespace ExpendituresALevel.Controllers
             return View(transactionModel);
         }
 
-        public ActionResult Edit(TransactionPostModel model)
+        public ActionResult Edit(int id)
         {
-            if (model.Id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            var models = _mapper.Map<IEnumerable<TransactionPostModel>>(_transactionService.GetAll());
-            TransactionPostModel transactionModel = models.FirstOrDefault(x => x.Id == model.Id);
+            var transactionModel = _mapper.Map<TransactionPostModel>(_transactionService.GetById(id));
             if (transactionModel == null)
             {
                 return HttpNotFound();
             }
+            _transactionService.Update(_mapper.Map<TransactionModel>(transactionModel));
             return View(transactionModel);
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Edit([Bind(Include = "Id,Value,Description,Title,CreatedDate,UpdateDate")] TransactionPostModel transactionModel)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-
-        //        return RedirectToAction("Index");
-        //    }
-        //    return View(transactionModel);
-        //}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit([Bind(Include = "Id,Value,Description,Title,CreatedDate,UpdatedDate")] TransactionPostModel transactionModel)
+        {
+            if (ModelState.IsValid)
+            {
+                _transactionService.Update(_mapper.Map<TransactionModel>(transactionModel));
+                return RedirectToAction("Index");
+            }
+            return View(transactionModel);
+        }
 
         public ActionResult Delete(TransactionPostModel model)
         {
